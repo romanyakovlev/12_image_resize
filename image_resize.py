@@ -1,6 +1,5 @@
-import argparse
 from PIL import Image
-from types import *
+import argparse
 import os
 
 
