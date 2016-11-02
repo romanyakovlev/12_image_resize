@@ -18,4 +18,4 @@ pip install -r requirements.txt
 python3 image-resize.py --scale --height --width --output name
 ```
 
-
+Из них обязательный 
