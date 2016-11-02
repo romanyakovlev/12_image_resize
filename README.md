@@ -10,3 +10,12 @@
 ```sh
 pip install -r requirements.txt
 ```
+# Запуск
+
+Запускаем скрипт и вводим необходимые нам аргументы
+
+```sh
+python3 image-resize.py --scale --height --width --output name
+```
+
+
