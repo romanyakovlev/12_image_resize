@@ -1,5 +1,6 @@
-from PIL import Image
 import argparse
+from PIL import Image
+from types import *
 import os
 
 
@@ -91,3 +92,4 @@ if __name__ == '__main__':
         print("'{}' folder does not exist. We create it and place your resized image".format(output))
         os.makedirs(output)
         image.save(full_path)
+    print("Success! Your file is '{}' and stored in '{}'".format(resized_image_name, output))
