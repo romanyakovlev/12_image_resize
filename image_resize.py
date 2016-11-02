@@ -1,5 +1,6 @@
-from PIL import Image
 import argparse
+from PIL import Image
+from types import *
 import os
 
 
@@ -58,9 +59,13 @@ def get_image_name(name, image):
     return image_name
 
 
-def get_image_path(resized_image_name, output):
+def get_image_path(resized_image_name, output, name):
     if not output:
-        return resized_image_name
+        if '/' not in name:
+            a = resized_image_name
+        else:
+            a = '/'.join(['/'.join(name.split('/')[:-1]), resized_image_name])
+        return a
     else:
         return '/'.join([output.rstrip('/'), resized_image_name])
 
@@ -83,12 +88,13 @@ if __name__ == '__main__':
     image = Image.open(name)
     is_logic_right, resized_image = get_resize_type(image, scale, height, width, name, output)
     if not is_logic_right:  print('You do something wrong. Set another arguments.')
-    resized_image_name = get_image_name(name, resized_image)
-    full_path = get_image_path(resized_image_name, output)
+    resized_image_name = get_image_name(name, resized_image).split('/')[-1]
+    full_path = get_image_path(resized_image_name, output, name)
     try:
         image.save(full_path)
     except:
         print("'{}' folder does not exist. We create it and place your resized image".format(output))
         os.makedirs(output)
         image.save(full_path)
-    print("Success! Your file is '{}' and stored in '{}'".format(resized_image_name, output))
+
+    print("Success! Your file is '{}' and stored in '{}'".format(resized_image_name, 'root' if  not output else output))
