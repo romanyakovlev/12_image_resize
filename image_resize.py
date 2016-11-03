@@ -94,5 +94,4 @@ if __name__ == '__main__':
         print("'{}' folder does not exist. We create it and place your resized image".format(output))
         os.makedirs(output)
         image.save(full_path)
-
     print("Success! Your file is '{}'.".format(resized_image_name))
