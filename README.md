@@ -17,6 +17,11 @@ pip install -r requirements.txt
 ```sh
 python3 image-resize.py --scale --height --width --output name
 ```
+Пример:
+
+```sh
+python3 image_resize.py --scale 2 image.jpg --output any_folder
+```
 Необязательные аргументы:
 
  - width - ширина результирующей картинки
