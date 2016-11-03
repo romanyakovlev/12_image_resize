@@ -1,6 +1,5 @@
 import argparse
 from PIL import Image
-from types import *
 import os
 
 
@@ -62,10 +61,9 @@ def get_image_name(name, image):
 def get_image_path(resized_image_name, output, name):
     if not output:
         if '/' not in name:
-            a = resized_image_name
+            return resized_image_name
         else:
-            a = '/'.join(['/'.join(name.split('/')[:-1]), resized_image_name])
-        return a
+            return '/'.join(['/'.join(name.split('/')[:-1]), resized_image_name])
     else:
         return '/'.join([output.rstrip('/'), resized_image_name])
 
@@ -97,4 +95,4 @@ if __name__ == '__main__':
         os.makedirs(output)
         image.save(full_path)
 
-    print("Success! Your file is '{}' and stored in '{}'".format(resized_image_name, 'root' if  not output else output))
+    print("Success! Your file is '{}'.".format(resized_image_name))
