@@ -118,7 +118,7 @@ def get_full_image_path(resized_image, output, name):
 if __name__ == '__main__':
     args = parse_args()
     scale, height, width, name, output = [args["scale"], args["height"], args["width"],
-                                                               args["name"], args["output"]]
+                                          args["name"], args["output"]]
     image = Image.open(name)
     resized_image = make_resize(image, scale, height, width, name, output)
     is_logic_right = check_logic(scale, height, width, name, output)
