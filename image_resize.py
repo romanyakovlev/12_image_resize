@@ -1,7 +1,6 @@
 import argparse
 import os
 from PIL import Image
-from collections import OrderedDict
 
 
 def resize_by_height_only(image, height):
@@ -36,22 +35,34 @@ def resize_by_scale_only(image, scale):
     return resized_image
 
 
-def make_resize_and_check_logic(image, scale, height, width, name, output):
-        is_logic_right = 0
-        if height and not scale and not width:
-            image = resize_by_height_only(image, float(height))
-            is_logic_right = 1
-        if width and not scale and not height:
-            image = resize_by_width_only(image, float(width))
-            is_logic_right = 1
-        if scale and not width and not height:
-            image = resize_by_scale_only(image, float(scale))
-            is_logic_right = 1
-        if width and height and not scale:
-            image = resize_by_height_and_width(image, float(width), float(height))
-            is_logic_right = 1
-        return is_logic_right, image
+def make_resize(image, scale, height, width, name, output):
+    is_logic_right = False
+    if height and not scale and not width:
+        image = resize_by_height_only(image, float(height))
+        is_logic_right = True
+    if width and not scale and not height:
+        image = resize_by_width_only(image, float(width))
+        is_logic_right = True
+    if scale and not width and not height:
+        image = resize_by_scale_only(image, float(scale))
+        is_logic_right = True
+    if width and height and not scale:
+        image = resize_by_height_and_width(image, float(width), float(height))
+        is_logic_right = True
+    return is_logic_right, image
 
+
+def check_logic(scale, height, width, name, output):
+    is_logic_right = False
+    if height and not scale and not width:
+        is_logic_right = True
+    if width and not scale and not height:
+        is_logic_right = True
+    if scale and not width and not height:
+        is_logic_right = True
+    if width and height and not scale:
+        is_logic_right = True
+    return is_logic_right
 
 def get_image_name(original_name, image):
     full_image_name = os.path.splitext(original_name)
@@ -69,20 +80,13 @@ def parse_args():
     parser.add_argument('--output')
     parser.add_argument('name')
     args = vars(parser.parse_args())
-    args_dict = OrderedDict((
-        ("scale", args["scale"]),
-        ("height", args["height"]),
-        ("width", args["width"]),
-        ("name", args["name"]),
-        ("output", args["output"]),
-    ))
-    return args_dict
+    return args
 
 
 def save_image(full_path, output_folder_name):
     try:
         image.save(full_path)
-    except:
+    except FileNotFoundError:
         print("'{}' folder does not exist. We create it and place your resized image inside".format(
               output_folder_name))
         os.makedirs(output_folder_name)
@@ -98,23 +102,27 @@ def explain_user_about_wrong_logic(**resize_arguments):
           "\n-widht and height\n-height/width only\n")
     quit()
 
-    
+
 def get_full_image_path(resized_image, output, name):
-    resized_image_name = get_image_name(name, resized_image).split('/')[-1]
+    os_sep = os.sep
+    resized_image_name = get_image_name(name, resized_image).split(os_sep)[-1]
     if not output:
-        if '/' not in name:
+        if os_sep not in name:
             return resized_image_name
         else:
-            return '/'.join(['/'.join(name.split('/')[:-1]), resized_image_name])
+            return os_sep.join([os_sep.join(name.split(os_sep)[:-1]), resized_image_name])
     else:
-        return '/'.join([output.rstrip('/'), resized_image_name])
+        return os_sep.join([output.rstrip(os_sep), resized_image_name])
 
-    
+
 if __name__ == '__main__':
-    args_dict = parse_args()
-    image = Image.open(args_dict["name"])
-    is_logic_right, resized_image = make_resize_and_check_logic(image, *args_dict.values())
+    args = parse_args()
+    scale, height, width, name, output = [args["scale"], args["height"], args["width"],
+                                                               args["name"], args["output"]]
+    image = Image.open(name)
+    resized_image = make_resize(image, scale, height, width, name, output)
+    is_logic_right = check_logic(scale, height, width, name, output)
     if not is_logic_right:
-        explain_user_about_wrong_logic(**args_dict)
-    full_path = get_full_image_path(resized_image, args_dict["output"], args_dict["name"])
-    save_image(full_path, args_dict["output"])
+        explain_user_about_wrong_logic(**args)
+    full_path = get_full_image_path(resized_image, output, name)
+    save_image(full_path, output)
