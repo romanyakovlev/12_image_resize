@@ -36,20 +36,15 @@ def resize_by_scale_only(image, scale):
 
 
 def make_resize(image, scale, height, width, name, output):
-    is_logic_right = False
     if height and not scale and not width:
         image = resize_by_height_only(image, float(height))
-        is_logic_right = True
     if width and not scale and not height:
         image = resize_by_width_only(image, float(width))
-        is_logic_right = True
     if scale and not width and not height:
         image = resize_by_scale_only(image, float(scale))
-        is_logic_right = True
     if width and height and not scale:
         image = resize_by_height_and_width(image, float(width), float(height))
-        is_logic_right = True
-    return is_logic_right, image
+    return image
 
 
 def check_logic(scale, height, width, name, output):
@@ -84,14 +79,17 @@ def parse_args():
 
 
 def save_image(full_path, output_folder_name):
+    image.save(full_path)
+    return None
+
+
+def create_folder_if_it_does_not(output_folder_name):
+    if output_folder_name is None:
+        return None
     try:
-        image.save(full_path)
-    except FileNotFoundError:
-        print("'{}' folder does not exist. We create it and place your resized image inside".format(
-              output_folder_name))
         os.makedirs(output_folder_name)
-        image.save(full_path)
-    print("Success! Your file in '{}'.".format(full_path))
+    except FileExistsError:
+        return None
 
 
 def explain_user_about_wrong_logic(**resize_arguments):
@@ -115,6 +113,10 @@ def get_full_image_path(resized_image, output, name):
         return os_sep.join([output.rstrip(os_sep), resized_image_name])
 
 
+def output_success(full_path):
+    print("Success! Your file in '{}'.".format(full_path))
+
+
 if __name__ == '__main__':
     args = parse_args()
     scale, height, width, name, output = [args["scale"], args["height"], args["width"],
@@ -125,4 +127,6 @@ if __name__ == '__main__':
     if not is_logic_right:
         explain_user_about_wrong_logic(**args)
     full_path = get_full_image_path(resized_image, output, name)
+    create_folder_if_it_does_not(output)
     save_image(full_path, output)
+    output_success(full_path)
