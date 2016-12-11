@@ -80,16 +80,13 @@ def parse_args():
 
 def save_image(full_path, output_folder_name):
     image.save(full_path)
-    return None
 
 
 def create_folder_if_it_does_not(output_folder_name):
-    if output_folder_name is None:
-        return None
     try:
         os.makedirs(output_folder_name)
     except FileExistsError:
-        return None
+        print('Folder already exists')
 
 
 def explain_user_about_wrong_logic(**resize_arguments):
@@ -127,6 +124,7 @@ if __name__ == '__main__':
     if not is_logic_right:
         explain_user_about_wrong_logic(**args)
     full_path = get_full_image_path(resized_image, output, name)
-    create_folder_if_it_does_not(output)
+    if output_folder_name is not None:
+        create_folder_if_it_does_not(output)
     save_image(full_path, output)
     output_success(full_path)
